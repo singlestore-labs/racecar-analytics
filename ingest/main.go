@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"github.com/eclipse/paho.mqtt.golang"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 func main() {
@@ -11,7 +12,8 @@ func main() {
 	SubscribeECU()
 	SubscribeBattery()
 
-	for {}
+	for {
+	}
 }
 
 var Client mqtt.Client
