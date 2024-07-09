@@ -8,6 +8,10 @@ import (
 
 func main() {
 	ConnectMQTT()
+	SubscribeECU()
+	SubscribeBattery()
+
+	for {}
 }
 
 var Client mqtt.Client
@@ -28,4 +32,16 @@ func ConnectMQTT() {
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
 	fmt.Println("[MQ] Connected to MQTT broker!")
+}
+
+func SubscribeECU() {
+	Client.Subscribe("ingest/ecu", 0, func(client mqtt.Client, msg mqtt.Message) {
+		fmt.Println("[MQ] Received ecu message")
+	})
+}
+
+func SubscribeBattery() {
+	Client.Subscribe("ingest/battery", 0, func(client mqtt.Client, msg mqtt.Message) {
+		fmt.Println("[MQ] Received battery message")
+	})
 }
