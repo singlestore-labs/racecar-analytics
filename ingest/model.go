@@ -36,8 +36,8 @@ func ECUFromBytes(data []byte) ECU {
 
 	ecu.CreatedAt = time.Now()
 
-	// Scale throttle to 0-100, assuming 20000 is 0 and 450000 is max
-	ecu.Throttle = (ecu.Throttle - 20000) * 100 / (450000 - 20000)
+	// Scale throttle to 0-100, assuming 2000 is 0 and 4500 is max
+	ecu.Throttle = (ecu.Throttle - 2000) * 100 / (4500 - 2000)
 	return ecu
 }
 
