@@ -38,12 +38,14 @@ var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
 
 func SubscribeECU() {
 	Client.Subscribe("ingest/ecu", 0, func(client mqtt.Client, msg mqtt.Message) {
-		fmt.Println("[MQ] Received ecu message")
+		ecu := ECUFromBytes(msg.Payload())
+		fmt.Printf("[MQ] Received ecu message: %v\n", ecu)
 	})
 }
 
 func SubscribeBattery() {
 	Client.Subscribe("ingest/battery", 0, func(client mqtt.Client, msg mqtt.Message) {
-		fmt.Println("[MQ] Received battery message")
+		battery := BatteryFromBytes(msg.Payload())
+		fmt.Printf("[MQ] Received battery message: %v\n", battery)
 	})
 }
