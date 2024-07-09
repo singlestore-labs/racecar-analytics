@@ -6,16 +6,16 @@ import (
 )
 
 type ECU struct {
-	ID            int       `json:"id"`
+	ID            int       `json:"id" gorm:"primaryKey"`
 	MotorRPM      int       `json:"motor_rpm"`
 	Speed         int       `json:"speed"`
 	Throttle      int       `json:"throttle"`
 	BrakePressure int       `json:"brake_pressure"`
-	CreatedAt     time.Time `json:"created_at"`
+	CreatedAt     time.Time `json:"created_at" gorm:"precision:6"`
 }
 
 type Battery struct {
-	ID           int       `json:"id"`
+	ID           int       `json:"id" gorm:"primaryKey"`
 	ChargeLevel  int       `json:"charge_level"`
 	CellTemp1    int       `json:"cell_temp_1"`
 	CellTemp2    int       `json:"cell_temp_2"`
@@ -25,7 +25,7 @@ type Battery struct {
 	CellVoltage2 int       `json:"cell_voltage_2"`
 	CellVoltage3 int       `json:"cell_voltage_3"`
 	CellVoltage4 int       `json:"cell_voltage_4"`
-	CreatedAt    time.Time `json:"created_at"`
+	CreatedAt    time.Time `json:"created_at" gorm:"precision:6"`
 }
 
 func ECUFromBytes(data []byte) ECU {

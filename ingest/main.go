@@ -11,6 +11,7 @@ func main() {
 	ConnectMQTT()
 	SubscribeECU()
 	SubscribeBattery()
+	ConnectDB()
 
 	for {
 	}
