@@ -23,9 +23,6 @@ func ConnectDB() {
 	}
 	DB = db
 	log.Println("Connected to database")
-	err = db.AutoMigrate(ECU{}, Battery{})
-	if err != nil {
-		log.Fatalf("AutoMigration failed: %v", err)
-	}
+	db.AutoMigrate(ECU{}, Battery{})
 	log.Println("AutoMigration completed")
 }
