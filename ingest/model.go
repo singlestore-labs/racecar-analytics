@@ -35,6 +35,9 @@ func ECUFromBytes(data []byte) ECU {
 	ecu.BrakePressure = int(binary.BigEndian.Uint16(data[5:7]))
 
 	ecu.CreatedAt = time.Now()
+
+	// Scale throttle to 0-100, assuming 20000 is 0 and 450000 is max
+	ecu.Throttle = (ecu.Throttle - 20000) * 100 / (450000 - 20000)
 	return ecu
 }
 
@@ -59,7 +62,7 @@ func BatteryFromBytes(data []byte) Battery {
 	battery.CellTemp4 = int(data[14])
 	// Cell 4 Voltage is byte 15
 	battery.CellVoltage4 = int(data[15])
-	
+
 	battery.CreatedAt = time.Now()
 	return battery
 }
