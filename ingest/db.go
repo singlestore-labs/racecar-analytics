@@ -26,3 +26,19 @@ func ConnectDB() {
 	db.AutoMigrate(ECU{}, Battery{})
 	log.Println("AutoMigration completed")
 }
+
+func CreateECU(ecu ECU) (ECU, error) {
+	result := DB.Create(&ecu)
+	if result.Error != nil {
+		return ECU{}, result.Error
+	}
+	return ecu, nil
+}
+
+func CreateBattery(battery Battery) (Battery, error) {
+	result := DB.Create(&battery)
+	if result.Error != nil {
+		return Battery{}, result.Error
+	}
+	return battery, nil
+}
