@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -16,6 +15,8 @@ func StartServer() {
 	r.GET("/battery", GetAllBatteries)
 	r.GET("/ecu/averages", GetECUAverages)
 	r.GET("/battery/averages", GetBatteryAverages)
+	r.GET("/ecu/stream", StreamECUs)
+	r.GET("/battery/stream", StreamBatteries)
 	r.Run(":" + Port)
 }
 
@@ -76,11 +77,23 @@ func StreamECUs(c *gin.Context) {
 	defer conn.Close()
 
 	for {
-		DB.Model(&ECU{}).Find(&[]ECU{})
-		time.Sleep(1 * time.Second)
+		RegisterECUCallback(func(ecu ECU) {
+			conn.WriteJSON(ecu)
+		})
 	}
 }
 
 func StreamBatteries(c *gin.Context) {
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer conn.Close()
 
+	for {
+		RegisterBatteryCallback(func(battery Battery) {
+			conn.WriteJSON(battery)
+		})
+	}
 }
