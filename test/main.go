@@ -9,6 +9,8 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
+var PublishInterval = 1000
+
 var MQTTHost = "localhost"
 var MQTTPort = "1883"
 
@@ -39,7 +41,7 @@ func main() {
 			fmt.Println("Battery published")
 		}
 
-		time.Sleep(1 * time.Second)
+		time.Sleep(time.Duration(PublishInterval) * time.Millisecond)
 	}
 }
 
