@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -66,34 +67,43 @@ func GetBatteryAverages(c *gin.Context) {
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 }
 
 func StreamECUs(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		log.Println(err)
 		return
 	}
 	defer conn.Close()
 
+	RegisterECUCallback(func(ecu ECU) {
+		conn.WriteJSON(ecu)
+	})
+
 	for {
-		RegisterECUCallback(func(ecu ECU) {
-			conn.WriteJSON(ecu)
-		})
+		_, p, _ := conn.ReadMessage()
+		log.Println(string(p))
 	}
 }
 
 func StreamBatteries(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		log.Println(err)
 		return
 	}
 	defer conn.Close()
 
+	RegisterBatteryCallback(func(battery Battery) {
+		conn.WriteJSON(battery)
+	})
+
 	for {
-		RegisterBatteryCallback(func(battery Battery) {
-			conn.WriteJSON(battery)
-		})
+		_, p, _ := conn.ReadMessage()
+		log.Println(string(p))
 	}
 }
