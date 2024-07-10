@@ -32,6 +32,7 @@ func CreateECU(ecu ECU) (ECU, error) {
 	if result.Error != nil {
 		return ECU{}, result.Error
 	}
+	PushECU(ecu)
 	return ecu, nil
 }
 
@@ -40,5 +41,6 @@ func CreateBattery(battery Battery) (Battery, error) {
 	if result.Error != nil {
 		return Battery{}, result.Error
 	}
+	PushBattery(battery)
 	return battery, nil
 }

@@ -2,8 +2,10 @@ package main
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
 var Port = "9000"
@@ -58,4 +60,27 @@ func GetBatteryAverages(c *gin.Context) {
 	DB.Model(&Battery{}).Select("AVG(charge_level) as avg_charge_level, AVG(cell_temp1) as avg_cell_temp1, AVG(cell_temp2) as avg_cell_temp2, AVG(cell_temp3) as avg_cell_temp3, AVG(cell_temp4) as avg_cell_temp4, AVG(cell_voltage1) as avg_cell_voltage1, AVG(cell_voltage2) as avg_cell_voltage2, AVG(cell_voltage3) as avg_cell_voltage3, AVG(cell_voltage4) as avg_cell_voltage4").Scan(&result)
 
 	c.JSON(http.StatusOK, result)
+}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
+
+func StreamECUs(c *gin.Context) {
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer conn.Close()
+
+	for {
+		DB.Model(&ECU{}).Find(&[]ECU{})
+		time.Sleep(1 * time.Second)
+	}
+}
+
+func StreamBatteries(c *gin.Context) {
+
 }

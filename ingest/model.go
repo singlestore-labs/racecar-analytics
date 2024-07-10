@@ -71,3 +71,26 @@ func BatteryFromBytes(data []byte) Battery {
 	battery.CreatedAt = time.Now()
 	return battery
 }
+
+var ecuCallbacks []func(ecu ECU)
+var batteryCallbacks []func(battery Battery)
+
+func RegisterECUCallback(callback func(ecu ECU)) {
+	ecuCallbacks = append(ecuCallbacks, callback)
+}
+
+func RegisterBatteryCallback(callback func(battery Battery)) {
+	batteryCallbacks = append(batteryCallbacks, callback)
+}
+
+func PushECU(ecu ECU) {
+	for _, callback := range ecuCallbacks {
+		callback(ecu)
+	}
+}
+
+func PushBattery(battery Battery) {
+	for _, callback := range batteryCallbacks {
+		callback(battery)
+	}
+}
