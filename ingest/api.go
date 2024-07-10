@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -12,6 +13,7 @@ var Port = "9000"
 
 func StartServer() {
 	r := gin.Default()
+	r.Use(cors.Default())
 	r.GET("/ecu", GetAllECUs)
 	r.GET("/battery", GetAllBatteries)
 	r.GET("/ecu/averages", GetECUAverages)
