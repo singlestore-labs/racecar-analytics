@@ -40,6 +40,10 @@ var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
 func SubscribeECU() {
 	Client.Subscribe("ingest/ecu", 0, func(client mqtt.Client, msg mqtt.Message) {
 		ecu := ECUFromBytes(msg.Payload())
+		ecu, err := CreateECU(ecu)
+		if err != nil {
+			fmt.Printf("failed to create ecu: %v", err)
+		}
 		fmt.Printf("[MQ] Received ecu message: %v\n", ecu)
 	})
 }
@@ -47,6 +51,10 @@ func SubscribeECU() {
 func SubscribeBattery() {
 	Client.Subscribe("ingest/battery", 0, func(client mqtt.Client, msg mqtt.Message) {
 		battery := BatteryFromBytes(msg.Payload())
+		battery, err := CreateBattery(battery)
+		if err != nil {
+			fmt.Printf("failed to create battery: %v", err)
+		}
 		fmt.Printf("[MQ] Received battery message: %v\n", battery)
 	})
 }
