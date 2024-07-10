@@ -12,9 +12,7 @@ func main() {
 	SubscribeECU()
 	SubscribeBattery()
 	ConnectDB()
-
-	for {
-	}
+	StartServer()
 }
 
 var Client mqtt.Client
