@@ -5,6 +5,23 @@ import (
 	"time"
 )
 
+/*
+CAN Frame Format:
+
++--------+-----+-----------+---------+---------+----------+---------+----------+----------+----------+
+| Node   | ID  | Byte 0    | Byte 1  | Byte 2  | Byte 3   | Byte 4  | Byte 5   | Byte 6   | Byte 7   |
++--------+-----+-----------+---------+---------+----------+---------+----------+----------+----------+
+| ECU    | 100 |       Motor RPM     |  Speed  |     Throttle       |    Brake Pressure   |          |
++--------+-----+-----------+---------+---------+----------+---------+----------+----------+----------+
+| Battery| 200 | Charge    |         |         |          |         |          |          |          |
+|        |     | Level     |         |         |          |         |          |          |          |
++--------+-----+-----------+---------+---------+----------+---------+----------+----------+----------+
+| Battery| 201 | Cell 1    | Cell 1  | Cell 2  | Cell 2   | Cell 3  | Cell 3   | Cell 4   | Cell 4   |
+|        |     | Temp      | Voltage | Temp    | Voltage  | Temp    | Voltage  | Temp     | Voltage  |
++--------+-----+-----------+---------+---------+----------+---------+----------+----------+----------+
+
+*/
+
 type ECU struct {
 	ID            int       `json:"id" gorm:"primaryKey"`
 	MotorRPM      int       `json:"motor_rpm"`
@@ -28,6 +45,8 @@ type Battery struct {
 	CreatedAt    time.Time `json:"created_at" gorm:"precision:6"`
 }
 
+// ECUFromBytes converts a byte slice to an ECU struct.
+// It interprets the byte data according to the CAN frame format and scales the throttle value.
 func ECUFromBytes(data []byte) ECU {
 	var ecu ECU
 	// MotorRPM is bytes 0-1
@@ -46,6 +65,8 @@ func ECUFromBytes(data []byte) ECU {
 	return ecu
 }
 
+// BatteryFromBytes converts a byte slice to a Battery struct.
+// It interprets the byte data according to the CAN frame format for battery information.
 func BatteryFromBytes(data []byte) Battery {
 	var battery Battery
 	// ChargeLevel is byte 0
@@ -72,23 +93,30 @@ func BatteryFromBytes(data []byte) Battery {
 	return battery
 }
 
+// ecuCallbacks is a slice of functions to be called when new ECU data is available.
 var ecuCallbacks []func(ecu ECU)
+
+// batteryCallbacks is a slice of functions to be called when new Battery data is available.
 var batteryCallbacks []func(battery Battery)
 
+// RegisterECUCallback adds a new callback function to be executed when ECU data is pushed.
 func RegisterECUCallback(callback func(ecu ECU)) {
 	ecuCallbacks = append(ecuCallbacks, callback)
 }
 
+// RegisterBatteryCallback adds a new callback function to be executed when Battery data is pushed.
 func RegisterBatteryCallback(callback func(battery Battery)) {
 	batteryCallbacks = append(batteryCallbacks, callback)
 }
 
+// PushECU executes all registered ECU callbacks with the provided ECU data.
 func PushECU(ecu ECU) {
 	for _, callback := range ecuCallbacks {
 		callback(ecu)
 	}
 }
 
+// PushBattery executes all registered Battery callbacks with the provided Battery data.
 func PushBattery(battery Battery) {
 	for _, callback := range batteryCallbacks {
 		callback(battery)

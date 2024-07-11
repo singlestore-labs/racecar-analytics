@@ -9,8 +9,11 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// Port is the port number that the server will listen on.
 var Port = "9000"
 
+// StartServer initializes and starts the API server.
+// It sets up all our endpoints.
 func StartServer() {
 	r := gin.Default()
 	r.Use(cors.Default())
@@ -23,18 +26,24 @@ func StartServer() {
 	r.Run(":" + Port)
 }
 
+// GetAllECUs handles GET requests to retrieve all ECU records.
+// It returns a JSON array of all ECU data.
 func GetAllECUs(c *gin.Context) {
 	var ecus []ECU
 	DB.Find(&ecus)
 	c.JSON(http.StatusOK, ecus)
 }
 
+// GetAllBatteries handles GET requests to retrieve all Battery records.
+// It returns a JSON array of all Battery data.
 func GetAllBatteries(c *gin.Context) {
 	var batteries []Battery
 	DB.Find(&batteries)
 	c.JSON(http.StatusOK, batteries)
 }
 
+// GetECUAverages handles GET requests to retrieve average values for ECU data.
+// It calculates and returns average values for motor RPM, speed, throttle, and brake pressure.
 func GetECUAverages(c *gin.Context) {
 	var result struct {
 		AvgMotorRPM      float64 `json:"avg_motor_rpm"`
@@ -48,6 +57,8 @@ func GetECUAverages(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// GetBatteryAverages handles GET requests to retrieve average values for Battery data.
+// It calculates and returns average values for charge level, cell temperatures, and cell voltages.
 func GetBatteryAverages(c *gin.Context) {
 	var result struct {
 		AvgChargeLevel  float64 `json:"avg_charge_level"`
@@ -66,6 +77,7 @@ func GetBatteryAverages(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// upgrader is used to convert a regular HTTP connection to a WebSocket connection.
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -74,6 +86,8 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+// StreamECUs handles WebSocket connections for streaming real-time ECU data.
+// It registers a callback to send new ECU data to connected clients.
 func StreamECUs(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -92,6 +106,8 @@ func StreamECUs(c *gin.Context) {
 	}
 }
 
+// StreamBatteries handles WebSocket connections for streaming real-time Battery data.
+// It registers a callback to send new Battery data to connected clients.
 func StreamBatteries(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
