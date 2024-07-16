@@ -9,7 +9,7 @@ An example repository showcasing data being ingested from a vehicle's ECU and Ba
 - Golang 1.22+
 - Node.js 20+
 
-## How to run
+## Getting started
 
 Start the MQTT broker
 ```sh
