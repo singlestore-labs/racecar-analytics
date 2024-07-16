@@ -1,5 +1,7 @@
 # Building a real-time analytics pipeline for racecars
 
+**Attention**: The code in this repository is intended for experimental use only and is not fully tested, documented, or supported by SingleStore. Visit the [SingleStore Forums](https://www.singlestore.com/forum/) to ask questions about this repository.
+
 ![System overview](images/system.png)
 
 An example repository showcasing data being ingested from a vehicle's ECU and Battery nodes, uploaded to SingleStore, and visualized in a dashboard.
